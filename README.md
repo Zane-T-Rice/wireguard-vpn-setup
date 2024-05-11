@@ -1,5 +1,5 @@
 # What Is This?
-These are the scripts that I made to setup an EC2 instance with Wireguard as a VPN to a local machine of mine when I was trapped behind a shared router at an apartment. Hopefully it can help someone else escape this hell faster than I did and get back to hosting their favourite game servers or whatever else you do with this kind of technology. Ideally, you launch an ec2 instance, make the inbound rules match ec2-inbound-rules.png, and then you can scp the setup files on to the server and client and just run them and respond to any info that pops out.
+These are the scripts that I made to setup an Ubuntu EC2 instance with Wireguard as a VPN to a local machine of mine when I was trapped behind a shared router at an apartment. Hopefully it can help someone else escape this hell faster than I did and get back to hosting their favourite game servers or whatever else you do with this kind of technology. Ideally, you launch an ec2 instance, make the inbound rules match ec2-inbound-rules.png, and then you can scp the setup files on to the server and client and just run them and respond to any info that pops out.
 
 ```sh
   scp wireguard-vpn-setup/server-setup.sh user@YOUR_SERVER_PUBLIC_IP:~
