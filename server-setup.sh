@@ -1,8 +1,8 @@
 # Some variables you may want to change
-PRIVATE_ADDRESS_OF_SERVER = 10.20.10.1
-PRIVATE_ADDRESS_OF_LOCAL_CLIENT = 10.20.10.2
-GAME_SERVER_PORTS = 2456,2459
-WIREGUARD_PORT = 51820
+PRIVATE_ADDRESS_OF_SERVER= 10.20.10.1
+PRIVATE_ADDRESS_OF_LOCAL_CLIENT= 10.20.10.2
+GAME_SERVER_PORTS= 2456,2459
+WIREGUARD_PORT= 51820
 
 # Install Wireguard and Generate Keys
 sudo apt update
@@ -21,9 +21,9 @@ sudo chmod go= /etc/wireguard/client-private.key
 sudo cat /etc/wireguard/client-private.key | wg pubkey | sudo tee /etc/wireguard/client-public.key
 
 # Store the things we need to build the config files
-SERVER_PRIVATE_KEY = cat /etc/wireguard/server-private.key
-CLIENT_PUBLIC_KEY  = cat /etc/wireguard/client-public.key
-INTERNET_INTERFACE = ip route list default | cut -d " " -f 5
+SERVER_PRIVATE_KEY= cat /etc/wireguard/server-private.key
+CLIENT_PUBLIC_KEY= cat /etc/wireguard/client-public.key
+INTERNET_INTERFACE= ip route list default | cut -d " " -f 5
 
 # Write the server's wireguard config file in /etc/wireguard/wg0.conf
 sudo touch /etc/wireguard/wg0.conf

@@ -7,8 +7,8 @@ CLIENT_PRIVATE_KEY=
 
 # Some more configuration that you might want to change.
 WIREGUARD_CONFIG_FILE=/usr/local/etc/wireguard/wg0.conf
-PRIVATE_ADDRESS_OF_LOCAL_CLIENT = 10.20.10.2
-WIREGUARD_PORT = 51820
+PRIVATE_ADDRESS_OF_LOCAL_CLIENT= 10.20.10.2
+WIREGUARD_PORT= 51820
 
 # This will make the connection a vpn.
 ALLOWED_IPs=0.0.0.0/0
