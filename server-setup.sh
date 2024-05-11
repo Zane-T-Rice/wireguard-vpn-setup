@@ -3,6 +3,7 @@ PRIVATE_ADDRESS_OF_SERVER=10.20.10.1
 PRIVATE_ADDRESS_OF_LOCAL_CLIENT=10.20.10.2
 GAME_SERVER_PORTS=2456,2459
 WIREGUARD_PORT=51820
+WIREGUARD_CONFIG_FILE=/etc/wireguard/wg0.conf
 
 # Install Wireguard and Generate Keys
 sudo apt update
@@ -25,32 +26,35 @@ SERVER_PRIVATE_KEY=$(cat /etc/wireguard/server-private.key)
 CLIENT_PUBLIC_KEY=$(cat /etc/wireguard/client-public.key)
 INTERNET_INTERFACE=$(ip route list default | cut -d " " -f 5)
 
-# Write the server's wireguard config file in /etc/wireguard/wg0.conf
-sudo touch /etc/wireguard/wg0.conf
-sudo echo "[Interface]" > /etc/wireguard/wg0.conf
-sudo echo "Address = $PRIVATE_ADDRESS_OF_SERVER/24" >> /etc/wireguard/wg0.conf
-sudo echo "MTU = 1420" >> /etc/wireguard/wg0.conf
-sudo echo "# remote server private key" >> /etc/wireguard/wg0.conf
-sudo echo "PrivateKey = $SERVER_PRIVATE_KEY" >> /etc/wireguard/wg0.conf
-sudo echo "ListenPort = $WIREGUARD_PORT" >> /etc/wireguard/wg0.conf
-sudo echo "" >> /etc/wireguard/wg0.conf
-sudo echo "PostUp = ufw route allow in on wg0 out on $INTERNET_INTERFACE" >> /etc/wireguard/wg0.conf
-sudo echo "PostUp = iptables -t nat -I POSTROUTING -o $INTERNET_INTERFACE -j MASQUERADE" >> /etc/wireguard/wg0.conf
-if [ "$GAME_SERVER_PORTS" ]; then
-  sudo echo "PostUp = iptables -t nat -A PREROUTING -i $INTERNET_INTERFACE -p tcp -m multiport --dports $GAME_SERVER_PORTS -j DNAT --to-destination $PRIVATE_ADDRESS_OF_LOCAL_CLIENT" >> /etc/wireguard/wg0.conf
-  sudo echo "PostUp = iptables -t nat -A PREROUTING -i $INTERNET_INTERFACE -p udp -m multiport --dports $GAME_SERVER_PORTS -j DNAT --to-destination $PRIVATE_ADDRESS_OF_LOCAL_CLIENT" >> /etc/wireguard/wg0.conf
+# Write the server's wireguard config file in $WIREGUARD_CONFIG_FILE
+if [ -e "$WIREGUARD_CONFIG_FILE" ]; then
+  sudo mv $WIREGUARD_CONFIG_FILE $WIREGUARD_CONFIG_FILE.bak
 fi
-sudo echo "PreDown = ufw route delete allow in on wg0 out on $INTERNET_INTERFACE" >> /etc/wireguard/wg0.conf
-sudo echo "PreDown = iptables -t nat -D POSTROUTING -o $INTERNET_INTERFACE -j MASQUERADE" >> /etc/wireguard/wg0.conf
+sudo touch $WIREGUARD_CONFIG_FILE
+sudo echo "[Interface]" > $WIREGUARD_CONFIG_FILE
+sudo echo "Address = $PRIVATE_ADDRESS_OF_SERVER/24" >> $WIREGUARD_CONFIG_FILE
+sudo echo "MTU = 1420" >> $WIREGUARD_CONFIG_FILE
+sudo echo "# remote server private key" >> $WIREGUARD_CONFIG_FILE
+sudo echo "PrivateKey = $SERVER_PRIVATE_KEY" >> $WIREGUARD_CONFIG_FILE
+sudo echo "ListenPort = $WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
+sudo echo "" >> $WIREGUARD_CONFIG_FILE
+sudo echo "PostUp = ufw route allow in on wg0 out on $INTERNET_INTERFACE" >> $WIREGUARD_CONFIG_FILE
+sudo echo "PostUp = iptables -t nat -I POSTROUTING -o $INTERNET_INTERFACE -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
 if [ "$GAME_SERVER_PORTS" ]; then
-  sudo echo "PreDown = iptables -t nat -D PREROUTING -i $INTERNET_INTERFACE -p tcp -m multiport --dports $GAME_SERVER_PORTS -j DNAT --to-destination $PRIVATE_ADDRESS_OF_LOCAL_CLIENT" >> /etc/wireguard/wg0.conf
-  sudo echo "PreDown = iptables -t nat -D PREROUTING -i $INTERNET_INTERFACE -p udp -m multiport --dports $GAME_SERVER_PORTS -j DNAT --to-destination $PRIVATE_ADDRESS_OF_LOCAL_CLIENT" >> /etc/wireguard/wg0.conf
+  sudo echo "PostUp = iptables -t nat -A PREROUTING -i $INTERNET_INTERFACE -p tcp -m multiport --dports $GAME_SERVER_PORTS -j DNAT --to-destination $PRIVATE_ADDRESS_OF_LOCAL_CLIENT" >> $WIREGUARD_CONFIG_FILE
+  sudo echo "PostUp = iptables -t nat -A PREROUTING -i $INTERNET_INTERFACE -p udp -m multiport --dports $GAME_SERVER_PORTS -j DNAT --to-destination $PRIVATE_ADDRESS_OF_LOCAL_CLIENT" >> $WIREGUARD_CONFIG_FILE
+fi
+sudo echo "PreDown = ufw route delete allow in on wg0 out on $INTERNET_INTERFACE" >> $WIREGUARD_CONFIG_FILE
+sudo echo "PreDown = iptables -t nat -D POSTROUTING -o $INTERNET_INTERFACE -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
+if [ "$GAME_SERVER_PORTS" ]; then
+  sudo echo "PreDown = iptables -t nat -D PREROUTING -i $INTERNET_INTERFACE -p tcp -m multiport --dports $GAME_SERVER_PORTS -j DNAT --to-destination $PRIVATE_ADDRESS_OF_LOCAL_CLIENT" >> $WIREGUARD_CONFIG_FILE
+  sudo echo "PreDown = iptables -t nat -D PREROUTING -i $INTERNET_INTERFACE -p udp -m multiport --dports $GAME_SERVER_PORTS -j DNAT --to-destination $PRIVATE_ADDRESS_OF_LOCAL_CLIENT" >> $WIREGUARD_CONFIG_FILE
 done
-sudo echo "" >> /etc/wireguard/wg0.conf
-sudo echo "[Peer]" >> /etc/wireguard/wg0.conf
-sudo echo "AllowedIPs = $PRIVATE_ADDRESS_OF_LOCAL_CLIENT/32" >> /etc/wireguard/wg0.conf
-sudo echo "# local client public key" >> /etc/wireguard/wg0.conf
-sudo echo "PublicKey = $CLIENT_PUBLIC_KEY" >> /etc/wireguard/wg0.conf
+sudo echo "" >> $WIREGUARD_CONFIG_FILE
+sudo echo "[Peer]" >> $WIREGUARD_CONFIG_FILE
+sudo echo "AllowedIPs = $PRIVATE_ADDRESS_OF_LOCAL_CLIENT/32" >> $WIREGUARD_CONFIG_FILE
+sudo echo "# local client public key" >> $WIREGUARD_CONFIG_FILE
+sudo echo "PublicKey = $CLIENT_PUBLIC_KEY" >> $WIREGUARD_CONFIG_FILE
 
 # Make a reasonable attempt to enable ipv4 packet forwarding.
 sudo sed -E "s/#? ?net.ipv4.ip_forward=[01]?/net.ipv4.ip_forward=1/" -i /etc/sysctl.conf

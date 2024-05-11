@@ -19,6 +19,9 @@ if [ ! "$PUBLIC_ADDRESS_OF_SERVER" ] || [ ! "$SERVER_PUBLIC_KEY" ] || [ ! "$CLIE
   exit
 fi;
 
+if [ -e "$WIREGUARD_CONFIG_FILE" ]; then
+  mv $WIREGUARD_CONFIG_FILE $WIREGUARD_CONFIG_FILE.bak
+fi
 touch $WIREGUARD_CONFIG_FILE 
 echo "[Interface]" > $WIREGUARD_CONFIG_FILE
 echo "## Local Address : A private IP address for wg0 interface."
