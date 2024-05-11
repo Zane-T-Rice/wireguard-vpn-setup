@@ -1,6 +1,8 @@
 # Some configuration that you need to fill out.
 PUBLIC_ADDRESS_OF_SERVER=
+# The server-setup script generated this in /etc/wireguard/server-public.key
 SERVER_PUBLIC_KEY=
+# The server-setup script generated this in /etc/wireguard/client-private.key
 CLIENT_PRIVATE_KEY=
 
 # Some more configuration that you might want to change.
@@ -12,8 +14,8 @@ WIREGUARD_PORT = 51820
 ALLOWED_IPs=0.0.0.0/0
 
 # Write the client's wireguard config file in $WIREGUARD_CONFIG_FILE
-if [ ! "$PUBLIC_ADDRESS_OF_SERVER" ]; then
-  echo "Please fill in the public IP of your server."
+if [ ! "$PUBLIC_ADDRESS_OF_SERVER" ] || [ ! "$SERVER_PUBLIC_KEY" ] || [ ! "$CLIENT_PRIVATE_KEY" ]; then
+  echo "Please fill in the public IP of your server, public key of the server, and private key of the client."
   exit
 fi;
 
