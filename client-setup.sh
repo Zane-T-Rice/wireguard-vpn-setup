@@ -22,19 +22,20 @@ fi;
 if [ -e "$WIREGUARD_CONFIG_FILE" ]; then
   mv $WIREGUARD_CONFIG_FILE $WIREGUARD_CONFIG_FILE.bak
 fi
-touch $WIREGUARD_CONFIG_FILE 
+touch $WIREGUARD_CONFIG_FILE
 echo "[Interface]" > $WIREGUARD_CONFIG_FILE
-echo "## Local Address : A private IP address for wg0 interface."
-echo "Address = $PRIVATE_ADDRESS_OF_LOCAL_CLIENT/24"
-echo "ListenPort = $WIREGUARD_PORT"
-echo ""
-echo "## local client privateky"
-echo "PrivateKey = $CLIENT_PRIVATE_KEY"
-echo ""
-echo "[Peer]"
-echo "# remote server public key"
-echo "PublicKey = $SERVER_PUBLIC_KEY"
-echo "Endpoint = $PUBLIC_ADDRESS_OF_SERVER:$WIREGUARD_PORT"
-echo "AllowedIPs = $ALLOWED_IPs"
+echo "## Local Address : A private IP address for wg0 interface." >> $WIREGUARD_CONFIG_FILE
+echo "Address = $PRIVATE_ADDRESS_OF_LOCAL_CLIENT/24" >> $WIREGUARD_CONFIG_FILE
+echo "ListenPort = $WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
+echo "" >> $WIREGUARD_CONFIG_FILE
+echo "## local client privateky" >> $WIREGUARD_CONFIG_FILE
+echo "PrivateKey = $CLIENT_PRIVATE_KEY" >> $WIREGUARD_CONFIG_FILE
+echo "" >> $WIREGUARD_CONFIG_FILE
+echo "[Peer]" >> $WIREGUARD_CONFIG_FILE
+echo "# remote server public key" >> $WIREGUARD_CONFIG_FILE
+echo "PublicKey = $SERVER_PUBLIC_KEY" >> $WIREGUARD_CONFIG_FILE
+echo "Endpoint = $PUBLIC_ADDRESS_OF_SERVER:$WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
+echo "AllowedIPs = $ALLOWED_IPs" >> $WIREGUARD_CONFIG_FILE
 
+sudo wg-quick down wg0
 sudo wg-quick up wg0
