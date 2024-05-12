@@ -71,7 +71,7 @@ sudo wg-quick up wg0
 
 If you want to ssh to the local client through the public wireguard vpn you
 need to put your public key on the server as well as the client in
-authorized_keys and then add the "jump server" (the ec2 instance) to your
+~/.ssh/authorized_keys and then add the "jump server" (the ec2 instance) to your
 ~/.ssh/config sorta like this
 
 ```
