@@ -58,7 +58,6 @@ sudo systemctl enable wg-quick@wg0.service
 sudo systemctl start wg-quick@wg0.service
 ```
 
-
 # Client Setup
 ### 👁️ Client setup also available as an executable shell script in client-setup.sh. This guide may help if things don't work after using that script or if you just want to know what is going on.
 You will need to install wireguard on the client through your client's package manager.
