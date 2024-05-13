@@ -30,7 +30,7 @@ sudo cat /etc/wireguard/server-private.key | wg pubkey | sudo tee /etc/wireguard
 
 ```sh
 # Use this to get the default internet interface for the server config routing rules
-ip route list default
+ip route list default | cut -d " " -f 5
 ```
 
 ```sh
