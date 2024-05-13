@@ -1,7 +1,8 @@
 # What Is This?
-These are the scripts that I made to setup an Ubuntu EC2 instance with Wireguard as a VPN to a local machine of mine when I was trapped behind a shared router at an apartment. Hopefully it can help someone else escape this hell faster than I did and get back to hosting their favourite game servers or whatever else you do with this kind of technology. Ideally, you launch an ec2 instance, make the inbound rules match ec2-inbound-rules.png, adjust any configuration variables at the top of the setup scripts, and then you can scp the setup files on to the server and client and just run them and respond to any info that pops out.
+These are the scripts that I made to setup an Ubuntu EC2 instance with Wireguard as a VPN to a local machine of mine when I was trapped behind a shared router at an apartment. Hopefully it can help someone else escape this hell faster than I did and get back to hosting their favourite game servers or whatever else you do with this kind of technology. Ideally, you launch an ec2 instance, make the inbound rules match ec2-inbound-rules.png, adjust any configuration variables at the top of the setup scripts, and then you can scp the setup files on to the server and client and just run them and respond to any info that pops out. The server script will attempt to install WireGuard as if the server is Ubuntu, but it is up to you to install WireGuard on the client machine.
 
 ```sh
+  # Example of a possible way of getting the setup scripts on to the machines.
   scp wireguard-vpn-setup/server-setup.sh user@YOUR_SERVER_PUBLIC_IP:~
   scp wireguard-vpn-setup/client-setup.sh user@YOUR.LOCAL.CLIENT.IP.:~
 ```
@@ -16,9 +17,8 @@ These are the scripts that I made to setup an Ubuntu EC2 instance with Wireguard
 # Server Setup
 ### 👁️ Server setup also available as an executable shell script in server-setup.sh. This guide may help if things don't work after using that script or if you just want to know what is going on.
 
-So to start with you'll need to install wireguard, (vim 🕵️), and resolvconf and then create private/public keys for the server.
-
 ```sh
+# So to start with you'll need to install wireguard, (vim 🕵️), and resolvconf and then create private/public keys for the server.
 sudo apt update
 sudo apt install wireguard
 sudo apt install vim
@@ -28,32 +28,32 @@ sudo chmod go= /etc/wireguard/server-private.key
 sudo cat /etc/wireguard/server-private.key | wg pubkey | sudo tee /etc/wireguard/public.key
 ```
 
-Use this to get the default internet interface for the server config routing rules
 ```sh
+# Use this to get the default internet interface for the server config routing rules
 ip route list default
 ```
 
-See server-wg0.conf file for what this config looks like and set yours up to match your specs.
 ```sh
+# See server-wg0.conf file for what this config looks like and set yours up to match your specs.
 sudo vim /etc/wireguard/wg0.conf
 ```
 
-Set net.ipv4.ip_forward=1
 ```sh
+# Set net.ipv4.ip_forward=1
 sudo vim /etc/sysctl.conf
 sudo sysctl -p
 ```
 
-Run ufw commands, see ufw.sh for those and update it to match your specs. Then activate the firewall.
 ```sh
+# Run ufw commands, see ufw.sh for those and update it to match your specs. Then activate the firewall.
 sudo ./ufw.sh
 sudo ufw disable
 sleep 1
 sudo ufw enable
 ```
 
-Set up wireguard as a service and start it.
 ```sh
+# Set up wireguard as a service and start it.
 sudo systemctl enable wg-quick@wg0.service
 sudo systemctl start wg-quick@wg0.service
 ```
@@ -61,8 +61,9 @@ sudo systemctl start wg-quick@wg0.service
 
 # Client Setup
 ### 👁️ Client setup also available as an executable shell script in client-setup.sh. This guide may help if things don't work after using that script or if you just want to know what is going on.
-See client-wg0.conf file for what this looks like.
+You will need to install wireguard on the client through your client's package manager.
 ```sh
+# See client-wg0.conf file for what this looks like.
 sudo vim /usr/local/etc/wireguard/wg0.conf
 sudo wg-quick up wg0
 ```

@@ -1,4 +1,5 @@
-# Some configuration that you need to fill out.
+# You will need to install WireGuard through your client's package manager
+# and fill out these variables once you have run the server-setup.sh script.
 PUBLIC_ADDRESS_OF_SERVER=
 # The server-setup script generated this in /etc/wireguard/server-public.key
 SERVER_PUBLIC_KEY=
