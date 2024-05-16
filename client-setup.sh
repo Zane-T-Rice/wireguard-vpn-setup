@@ -5,9 +5,10 @@ PUBLIC_ADDRESS_OF_SERVER=
 SERVER_PUBLIC_KEY=
 # The server-setup script generated this in /etc/wireguard/client-private.key
 CLIENT_PRIVATE_KEY=
+# This directory must exist, the wg0.conf file will be created however.
+WIREGUARD_CONFIG_FILE=$HOME/.config/wireguard/wg0.conf
 
 # Some more configuration that you might want to change.
-WIREGUARD_CONFIG_FILE=$HOME/.config/wireguard/wg0.conf
 PRIVATE_ADDRESS_OF_LOCAL_CLIENT=10.20.10.2
 WIREGUARD_PORT=51820
 
