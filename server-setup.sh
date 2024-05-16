@@ -27,6 +27,11 @@ if sudo test ! -e "/etc/wireguard/client-private.key"; then
   sudo cat /etc/wireguard/client-private.key | wg pubkey | sudo tee /etc/wireguard/client-public.key
 fi
 
+# Down WireGuard before changing the rules, because the down will fail later with the new rules.
+# Does nothing if WireGuard is not already running.
+sudo wg-quick down wg0
+sudo systemctl stop wg-quick@wg0.service
+
 # Store the things we need to build the config files
 SERVER_PRIVATE_KEY=$(sudo cat /etc/wireguard/server-private.key)
 CLIENT_PUBLIC_KEY=$(sudo cat /etc/wireguard/client-public.key)
@@ -104,6 +109,5 @@ sleep 1
 yes | sudo ufw enable
 
 # Set up wireguard as a service
-sudo systemctl stop wg-quick@wg0.service
 sudo systemctl enable wg-quick@wg0.service
 sudo systemctl start wg-quick@wg0.service
