@@ -7,7 +7,7 @@ SERVER_PUBLIC_KEY=
 CLIENT_PRIVATE_KEY=
 
 # Some more configuration that you might want to change.
-WIREGUARD_CONFIG_FILE=/usr/local/etc/wireguard/wg0.conf
+WIREGUARD_CONFIG_FILE=$HOME/.config/wireguard/wg0.conf
 PRIVATE_ADDRESS_OF_LOCAL_CLIENT=10.20.10.2
 WIREGUARD_PORT=51820
 
@@ -29,7 +29,7 @@ echo "## Local Address : A private IP address for wg0 interface." >> $WIREGUARD_
 echo "Address = $PRIVATE_ADDRESS_OF_LOCAL_CLIENT/24" >> $WIREGUARD_CONFIG_FILE
 echo "ListenPort = $WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
 echo "" >> $WIREGUARD_CONFIG_FILE
-echo "## local client privateky" >> $WIREGUARD_CONFIG_FILE
+echo "## local client privatekey" >> $WIREGUARD_CONFIG_FILE
 echo "PrivateKey = $CLIENT_PRIVATE_KEY" >> $WIREGUARD_CONFIG_FILE
 echo "" >> $WIREGUARD_CONFIG_FILE
 echo "[Peer]" >> $WIREGUARD_CONFIG_FILE
@@ -38,5 +38,5 @@ echo "PublicKey = $SERVER_PUBLIC_KEY" >> $WIREGUARD_CONFIG_FILE
 echo "Endpoint = $PUBLIC_ADDRESS_OF_SERVER:$WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
 echo "AllowedIPs = $ALLOWED_IPs" >> $WIREGUARD_CONFIG_FILE
 
-sudo wg-quick down wg0
-sudo wg-quick up wg0
+sudo wg-quick down $WIREGUARD_CONFIG_FILE
+sudo wg-quick up $WIREGUARD_CONFIG_FILE
