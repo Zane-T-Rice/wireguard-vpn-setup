@@ -7,11 +7,8 @@ SERVER_PUBLIC_KEY=
 CLIENT_PRIVATE_KEY=
 # This directory must exist, the wg0.conf file will be created however.
 WIREGUARD_CONFIG_FILE=$HOME/.config/wireguard/wg0.conf
-
-# Some more configuration that you might want to change.
 PRIVATE_ADDRESS_OF_LOCAL_CLIENT=10.20.10.2
 WIREGUARD_PORT=51820
-
 # This will make the connection a vpn.
 ALLOWED_IPs=0.0.0.0/0
 
