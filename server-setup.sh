@@ -89,9 +89,8 @@ sudo sysctl -p
 
 # Set up ufw
 sudo ufw allow $WIREGUARD_PORT/udp
-# Uncomment these to use wireguard vpn as a full vpn for all traffic rather than just specific traffic.
-# sudo ufw allow 80/tcp
-# sudo ufw allow 443/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
 sudo ufw allow 53/udp
 sudo ufw allow 22/tcp
 

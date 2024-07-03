@@ -11,6 +11,9 @@ PRIVATE_ADDRESS_OF_LOCAL_CLIENT=10.20.10.2
 WIREGUARD_PORT=51820
 # This will make the connection a vpn.
 ALLOWED_IPs=0.0.0.0/0
+# Comma seperated list of outgoing traffic ports that should not be sent over the wireguard vpn.
+# For example: 80 and 443 are the ports for normal http(s) traffic.
+USE_NORMAL_INTERFACE_FOR_PORTS=
 
 # Write the client's wireguard config file in $WIREGUARD_CONFIG_FILE
 if [ ! "$PUBLIC_ADDRESS_OF_SERVER" ] || [ ! "$SERVER_PUBLIC_KEY" ] || [ ! "$CLIENT_PRIVATE_KEY" ]; then
@@ -26,6 +29,14 @@ echo "[Interface]" > $WIREGUARD_CONFIG_FILE
 echo "## Local Address : A private IP address for wg0 interface." >> $WIREGUARD_CONFIG_FILE
 echo "Address = $PRIVATE_ADDRESS_OF_LOCAL_CLIENT/24" >> $WIREGUARD_CONFIG_FILE
 echo "ListenPort = $WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
+echo "" >> $WIREGUARD_CONFIG_FILE
+if [ "$USE_NORMAL_INTERFACE_FOR_PORTS" ]; then
+  echo "FwMark = 4242" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --dports 80,443 -j MARK --set-mark 4242" >> $WIR
+  echo "PostUp = iptables -t nat -A POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --dports 80,443 -j MARK --set-mark 4242" >> $WI
+  echo "PreDown = iptables -t nat -D POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
+fi
 echo "" >> $WIREGUARD_CONFIG_FILE
 echo "## local client privatekey" >> $WIREGUARD_CONFIG_FILE
 echo "PrivateKey = $CLIENT_PRIVATE_KEY" >> $WIREGUARD_CONFIG_FILE
