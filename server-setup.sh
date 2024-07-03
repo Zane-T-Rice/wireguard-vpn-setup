@@ -89,11 +89,11 @@ sudo sysctl -p
 
 # Set up ufw
 sudo ufw allow $WIREGUARD_PORT/udp
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
+# Uncomment these to use wireguard vpn as a full vpn for all traffic rather than just specific traffic.
+# sudo ufw allow 80/tcp
+# sudo ufw allow 443/tcp
 sudo ufw allow 53/udp
 sudo ufw allow 22/tcp
-sudo ufw allow OpenSSH
 
 for client_with_ports in $(echo $CLIENTS_WITH_PORTS); do
   CLIENT="$(echo "$client_with_ports" | cut -d "," -f 1)"
