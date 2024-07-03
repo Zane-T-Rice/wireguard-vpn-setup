@@ -32,9 +32,9 @@ echo "ListenPort = $WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
 echo "" >> $WIREGUARD_CONFIG_FILE
 if [ "$USE_NORMAL_INTERFACE_FOR_PORTS" ]; then
   echo "FwMark = 4242" >> $WIREGUARD_CONFIG_FILE
-  echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --dports 80,443 -j MARK --set-mark 4242" >> $WIR
+  echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --dports $USE_NORMAL_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIR
   echo "PostUp = iptables -t nat -A POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
-  echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --dports 80,443 -j MARK --set-mark 4242" >> $WI
+  echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --dports $USE_NORMAL_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WI
   echo "PreDown = iptables -t nat -D POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
 fi
 echo "" >> $WIREGUARD_CONFIG_FILE
