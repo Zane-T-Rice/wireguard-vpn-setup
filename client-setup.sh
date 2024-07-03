@@ -13,6 +13,7 @@ WIREGUARD_PORT=51820
 ALLOWED_IPs=0.0.0.0/0
 # Comma seperated list of outgoing traffic ports that should not be sent over the wireguard vpn.
 # For example: 80 and 443 are the ports for normal http(s) traffic.
+# This only works in Linux because it uses iptables
 USE_NORMAL_INTERFACE_FOR_PORTS=
 
 # Write the client's wireguard config file in $WIREGUARD_CONFIG_FILE
@@ -36,8 +37,8 @@ if [ "$USE_NORMAL_INTERFACE_FOR_PORTS" ]; then
   echo "PostUp = iptables -t nat -A POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --dports $USE_NORMAL_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = iptables -t nat -D POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
+  echo "" >> $WIREGUARD_CONFIG_FILE
 fi
-echo "" >> $WIREGUARD_CONFIG_FILE
 echo "## local client privatekey" >> $WIREGUARD_CONFIG_FILE
 echo "PrivateKey = $CLIENT_PRIVATE_KEY" >> $WIREGUARD_CONFIG_FILE
 echo "" >> $WIREGUARD_CONFIG_FILE
