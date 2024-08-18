@@ -31,19 +31,20 @@ echo "Address = $PRIVATE_ADDRESS_OF_LOCAL_CLIENT/24" >> $WIREGUARD_CONFIG_FILE
 echo "ListenPort = $WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
 echo "" >> $WIREGUARD_CONFIG_FILE
 if [ "$USE_VPN_INTERFACE_FOR_PORTS" ]; then
-  echo "# Mark all traffic as non-vpn traffic" >> $WIREGUARD_CONFIG_FILE
-  echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --sports 0:65535 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-  echo "PostUp = iptables -t mangle -A OUTPUT -p udp -m multiport --sports 0:65535 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "Table = off" >> $WIREGUARD_CONFIG_FILE
+  echo "PreUp = sysctl -q net.ipv4.conf.all.src_valid_mark=1" >> $WIREGUARD_CONFIG_FILE
+  echo "" >> $WIREGUARD_CONFIG_FILE
   echo "# Mark the specific traffic that should go through the vpn based on the source port" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = iptables -t mangle -A OUTPUT -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
-  echo "PostUp = iptables -t nat -A POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
+  echo "# Add rules to send marks the correct way" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = ip route add 0.0.0.0/0 dev wg0 table 4242" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = ip rule add from all fwmark 4242 lookup 4242" >> $WIREGUARD_CONFIG_FILE
   echo "" >> $WIREGUARD_CONFIG_FILE
-  echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --sports 0:65535 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-  echo "PreDown = iptables -t mangle -D OUTPUT -p udp -m multiport --sports 0:65535 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = iptables -t mangle -D OUTPUT -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
-  echo "PreDown = iptables -t nat -D POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = ip route delete 0.0.0.0/0 dev wg0 table 4242" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = ip rule delete from all fwmark 4242 lookup 4242" >> $WIREGUARD_CONFIG_FILE
   echo "" >> $WIREGUARD_CONFIG_FILE
 fi
 echo "## local client privatekey" >> $WIREGUARD_CONFIG_FILE
