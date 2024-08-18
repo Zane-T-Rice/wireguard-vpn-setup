@@ -11,10 +11,9 @@ PRIVATE_ADDRESS_OF_LOCAL_CLIENT=10.20.10.2
 WIREGUARD_PORT=51820
 # This will make the connection a vpn.
 ALLOWED_IPs=0.0.0.0/0
-# Comma seperated list of outgoing traffic ports that should not be sent over the wireguard vpn.
-# For example: 80 and 443 are the ports for normal http(s) traffic.
-# This only works in Linux because it uses iptables
-USE_NORMAL_INTERFACE_FOR_PORTS=
+# Comma seperated list of source ports that should be sent over the wireguard vpn.
+# This uses the iptables sytax, so ports can be specified like 0:1000,1002,1003:1010.
+USE_VPN_INTERFACE_FOR_PORTS=
 
 # Write the client's wireguard config file in $WIREGUARD_CONFIG_FILE
 if [ ! "$PUBLIC_ADDRESS_OF_SERVER" ] || [ ! "$SERVER_PUBLIC_KEY" ] || [ ! "$CLIENT_PRIVATE_KEY" ]; then
@@ -31,11 +30,15 @@ echo "## Local Address : A private IP address for wg0 interface." >> $WIREGUARD_
 echo "Address = $PRIVATE_ADDRESS_OF_LOCAL_CLIENT/24" >> $WIREGUARD_CONFIG_FILE
 echo "ListenPort = $WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
 echo "" >> $WIREGUARD_CONFIG_FILE
-if [ "$USE_NORMAL_INTERFACE_FOR_PORTS" ]; then
-  echo "FwMark = 4242" >> $WIREGUARD_CONFIG_FILE
-  echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --dports $USE_NORMAL_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
+if [ "$USE_VPN_INTERFACE_FOR_PORTS" ]; then
+  echo "# Mark all traffic as non-vpn traffic" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --dports 0:65535 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "# Mark the specific traffic that should go through the vpn based on the source port" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = iptables -t nat -A POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
-  echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --dports $USE_NORMAL_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
+  echo "" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --dports 0:65535 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --sports 8096 -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = iptables -t nat -D POSTROUTING -j MASQUERADE" >> $WIREGUARD_CONFIG_FILE
   echo "" >> $WIREGUARD_CONFIG_FILE
 fi
