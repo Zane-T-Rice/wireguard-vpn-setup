@@ -37,6 +37,9 @@ if [ "$USE_VPN_INTERFACE_FOR_PORTS" ]; then
   echo "# Mark the specific traffic that should go through the vpn based on the source port" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = iptables -t mangle -A OUTPUT -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
+  echo "# Mark 192.168.1.* traffic to go through local network" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -d 192.168.1.0/24 -j MARK --set-mark 4243" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A OUTPUT -p udp -d 192.168.1.0/24 -j MARK --set-mark 4243" >> $WIREGUARD_CONFIG_FILE
   echo "# Add rules to send marks the correct way" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = ip route add 0.0.0.0/0 dev wg0 table 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = ip rule add from all fwmark 4242 lookup 4242" >> $WIREGUARD_CONFIG_FILE
@@ -45,6 +48,8 @@ if [ "$USE_VPN_INTERFACE_FOR_PORTS" ]; then
   echo "PreDown = iptables -t mangle -D OUTPUT -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = ip route delete 0.0.0.0/0 dev wg0 table 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = ip rule delete from all fwmark 4242 lookup 4242" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = ip route delete 0.0.0.0/0 dev eno1 table 4243" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = ip rule delete from all fwmark 4243 lookup 4243" >> $WIREGUARD_CONFIG_FILE
   echo "" >> $WIREGUARD_CONFIG_FILE
 fi
 echo "## local client privatekey" >> $WIREGUARD_CONFIG_FILE
