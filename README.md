@@ -21,6 +21,17 @@ These are the scripts that I made to setup an Ubuntu EC2 instance with Wireguard
 
 👁️ Client setup available as an executable shell script in client-setup.sh.
 
+### Some Useful Commands
+
+```sh
+  # This command will show you the policy chain that is applied to packets. Very useful for making sure packet marks are being applied as you think.
+  iptables -t mangle -L
+
+  # These commands help you see what ip tables exist and what routes each table uses.
+  ip -r rule list
+  ip route show table table_name
+```
+
 ### The valheim server needs to be running on a single port.
 
 If you have valheim in Docker, you should only expose the one
