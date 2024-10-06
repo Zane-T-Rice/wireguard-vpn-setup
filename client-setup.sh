@@ -62,6 +62,7 @@ echo "# remote server public key" >> $WIREGUARD_CONFIG_FILE
 echo "PublicKey = $SERVER_PUBLIC_KEY" >> $WIREGUARD_CONFIG_FILE
 echo "Endpoint = $PUBLIC_ADDRESS_OF_SERVER:$WIREGUARD_PORT" >> $WIREGUARD_CONFIG_FILE
 echo "AllowedIPs = $ALLOWED_IPs" >> $WIREGUARD_CONFIG_FILE
+echo "PersistentKeepalive = 25" >> $WIREGUARD_CONFIG_FILE
 
 sudo wg-quick down $WIREGUARD_CONFIG_FILE
 sudo wg-quick up $WIREGUARD_CONFIG_FILE
