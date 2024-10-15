@@ -87,7 +87,12 @@ done
 sudo sed -E "s/#? ?net.ipv4.ip_forward=[01]?/net.ipv4.ip_forward=1/" -i /etc/sysctl.conf
 sudo sysctl -p
 
-# Set up ufw
+# Wipe UFW settings (this denies all connections)
+yes | sudo ufw reset
+sleep 1
+yes | sudo ufw enable
+
+# Set up ufw (allow specific connections through)
 sudo ufw allow $WIREGUARD_PORT/udp
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
@@ -106,11 +111,6 @@ for client_with_ports in $(echo $CLIENTS_WITH_PORTS); do
     done
   fi
 done
-
-# If ufw is on, then this disable never seems to happen instanly, so I put a sleep in here. Shoot me.
-sudo ufw disable
-sleep 1
-yes | sudo ufw enable
 
 # Set up wireguard as a service
 sudo systemctl enable wg-quick@wg0.service
