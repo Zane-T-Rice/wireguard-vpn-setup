@@ -22,8 +22,10 @@ if [ ! "$PUBLIC_ADDRESS_OF_SERVER" ] || [ ! "$SERVER_PUBLIC_KEY" ] || [ ! "$CLIE
 fi;
 
 if [ -e "$WIREGUARD_CONFIG_FILE" ]; then
+  sudo wg-quick down $WIREGUARD_CONFIG_FILE
   mv $WIREGUARD_CONFIG_FILE $WIREGUARD_CONFIG_FILE.bak
 fi
+
 touch $WIREGUARD_CONFIG_FILE
 echo "[Interface]" > $WIREGUARD_CONFIG_FILE
 echo "## Local Address : A private IP address for wg0 interface." >> $WIREGUARD_CONFIG_FILE
@@ -64,5 +66,4 @@ echo "Endpoint = $PUBLIC_ADDRESS_OF_SERVER:$WIREGUARD_PORT" >> $WIREGUARD_CONFIG
 echo "AllowedIPs = $ALLOWED_IPs" >> $WIREGUARD_CONFIG_FILE
 echo "PersistentKeepalive = 25" >> $WIREGUARD_CONFIG_FILE
 
-sudo wg-quick down $WIREGUARD_CONFIG_FILE
 sudo wg-quick up $WIREGUARD_CONFIG_FILE
