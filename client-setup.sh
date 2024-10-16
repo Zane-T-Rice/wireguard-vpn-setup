@@ -52,8 +52,8 @@ if [ "$USE_VPN_INTERFACE_FOR_PORTS" ]; then
   echo "##### Mark the source ports that should go through the VPN." >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = iptables -t mangle -A PREROUTING  -p udp -j CONNMARK --restore-mark" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = iptables -t mangle -A POSTROUTING -p udp -m mark --mark 51820 -j CONNMARK --save-mark" >> $WIREGUARD_CONFIG_FILE
-  echo "PostUp = iptables -t mangle -A PREROUTING -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4" >> $WIREGUARD_CONFIG_FILE
-  echo "PostUp = iptables -t mangle -A PREROUTING -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A PREROUTING -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A PREROUTING -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = iptables -t mangle -A OUTPUT -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PostUp = ip route add default dev wg0 table 51820" >> $WIREGUARD_CONFIG_FILE
@@ -63,8 +63,8 @@ if [ "$USE_VPN_INTERFACE_FOR_PORTS" ]; then
   echo "" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = iptables -t mangle -D PREROUTING  -p udp -j CONNMARK --restore-mark" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = iptables -t mangle -D POSTROUTING -p udp -m mark --mark 51820 -j CONNMARK --save-mark" >> $WIREGUARD_CONFIG_FILE
-  echo "PreDown = iptables -t mangle -D PREROUTING -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark" >> $WIREGUARD_CONFIG_FILE
-  echo "PreDown = iptables -t mangle -D PREROUTING -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = iptables -t mangle -D PREROUTING -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = iptables -t mangle -D PREROUTING -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = iptables -t mangle -D OUTPUT -p udp -m multiport --sports $USE_VPN_INTERFACE_FOR_PORTS -j MARK --set-mark 4242" >> $WIREGUARD_CONFIG_FILE
   echo "PreDown = ip rule delete from all fwmark 4242 lookup 51820" >> $WIREGUARD_CONFIG_FILE
