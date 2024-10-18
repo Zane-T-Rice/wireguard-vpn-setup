@@ -11,7 +11,7 @@ PRIVATE_ADDRESS_OF_LOCAL_CLIENT=10.20.10.2
 WIREGUARD_PORT=51820
 # This will make the connection a vpn.
 ALLOWED_IPs=0.0.0.0/0
-# Comma seperated list of source ports that should be sent over the wireguard vpn.
+# Comma seperated list of ports that should be sent over the wireguard vpn.
 # This uses the iptables sytax, so ports can be specified like 0:1000,1002,1003:1010.
 USE_VPN_INTERFACE_FOR_PORTS=
 
