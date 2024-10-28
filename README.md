@@ -31,9 +31,3 @@ These are the scripts that I made to setup an Ubuntu EC2 instance with Wireguard
   ip -r rule list
   ip route show table table_name
 ```
-
-### The valheim server needs to be running on a single port.
-
-If you have valheim in Docker, you should only expose the one
-port in the DOCKERFILE and only include that one port in the docker
-run command. I had some busted behavior because of these things, so leaving this here in case it saves someone in the future. Also, maybe I'm just wrong and something else was broken 🕴️.
