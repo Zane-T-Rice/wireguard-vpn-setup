@@ -6,7 +6,7 @@
 # and fill out these variables once you have run the server-setup.sh script.
 #
 # Note on how I use this: I have several docker containers all within the
-# 172.17.0.0/16 space. I use this setup to send all docker traffic over
+# 172.19.0.0/12 space. I use this setup to send all docker traffic over
 # WireGuard to effectively give the containers a public IP address.
 #
 # The public IP of the server where the WireGuard server client script was run.
@@ -27,8 +27,7 @@ ALLOWED_IPs=0.0.0.0/0
 #
 # Communication destined for another device in the HOST_LOCAL_IP_ADDRESS
 # space will not go over the VPN.
-HOST_LOCAL_IP_ADDRESS=172.17.0.0/16
-HOST_LOCAL_IP_ADDRESS_V6=fe80::/10
+HOST_LOCAL_IP_ADDRESS=172.19.0.0/12
 # Communication from all ports on the HOST_LOCAL_IP_ADDRESS will
 # go through the VPN unless they are specified here or have a
 # destination within the HOST_LOCAL_IP_ADDRESS.
@@ -82,26 +81,6 @@ if [ "$AVOID_VPN_FOR_THESE_PORTS" ]; then
     echo "PostUp = ip route flush cached" >> $WIREGUARD_CONFIG_FILE
     echo "" >> $WIREGUARD_CONFIG_FILE
   fi
-  if [ "$HOST_LOCAL_IP_ADDRESS_V6" ]; then
-    echo "PostUp = ip6tables -t mangle -A PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A OUTPUT -p tcp -s $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A OUTPUT -p udp -s $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS_V6 -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS_V6 -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A OUTPUT -p udp -s $HOST_LOCAL_IP_ADDRESS_V6 -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A OUTPUT -p tcp -s $HOST_LOCAL_IP_ADDRESS_V6 -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A PREROUTING -p udp -d $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A PREROUTING -p tcp -d $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A OUTPUT -p udp -d $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip6tables -t mangle -A OUTPUT -p tcp -d $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip -6 route add default dev wg0 table 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip -6 rule add from all fwmark 51820 lookup 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip -6 rule add from all fwmark 80 lookup main" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip -6 rule add from all lookup main suppress_prefixlength 0" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = ip -6 route flush cached" >> $WIREGUARD_CONFIG_FILE
-    echo "" >> $WIREGUARD_CONFIG_FILE
-  fi
   if [ "$HOST_LOCAL_IP_ADDRESS" ]; then
     echo "PreDown = iptables -t mangle -D PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
     echo "PreDown = iptables -t mangle -D PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
@@ -118,26 +97,6 @@ if [ "$AVOID_VPN_FOR_THESE_PORTS" ]; then
     echo "PreDown = ip rule delete from all fwmark 51820 lookup 51820" >> $WIREGUARD_CONFIG_FILE
     echo "PreDown = ip rule delete from all fwmark 80 lookup main" >> $WIREGUARD_CONFIG_FILE
     echo "PreDown = ip rule delete from all lookup main suppress_prefixlength 0" >> $WIREGUARD_CONFIG_FILE
-  fi
-  if [ "$HOST_LOCAL_IP_ADDRESS_V6" ]; then
-    echo "PreDown = ip6tables -t mangle -D PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D OUTPUT -p tcp -s $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D OUTPUT -p udp -s $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS_V6 -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS_V6 -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D OUTPUT -p udp -s $HOST_LOCAL_IP_ADDRESS_V6 -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D OUTPUT -p tcp -s $HOST_LOCAL_IP_ADDRESS_V6 -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D PREROUTING -p udp -d $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D PREROUTING -p tcp -d $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D OUTPUT -p udp -d $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip6tables -t mangle -D OUTPUT -p tcp -d $HOST_LOCAL_IP_ADDRESS_V6 -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip -6 route delete default dev wg0 table 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip -6 rule delete from all fwmark 51820 lookup 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip -6 rule delete from all fwmark 80 lookup main" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip -6 rule delete from all lookup main suppress_prefixlength 0" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = ip -6 route flush cached" >> $WIREGUARD_CONFIG_FILE
-    echo "" >> $WIREGUARD_CONFIG_FILE
   fi
 fi
 echo "## local client privatekey" >> $WIREGUARD_CONFIG_FILE
