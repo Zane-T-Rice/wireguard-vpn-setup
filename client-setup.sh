@@ -61,10 +61,10 @@ echo "" >> $WIREGUARD_CONFIG_FILE
 if [ "$HOST_LOCAL_IP_ADDRESS" ]; then
   echo "Table = off" >> $WIREGUARD_CONFIG_FILE
   echo "PreUp = sysctl -q net.ipv4.conf.all.src_valid_mark=1" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = iptables -t mangle -A PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = iptables -t mangle -A PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PostUp = iptables -t mangle -A OUTPUT -p udp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A OUTPUT -p tcp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "PostUp = iptables -t mangle -A OUTPUT -p udp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
   if [ "$AVOID_VPN_FOR_THESE_PORTS" ]; then
     echo "PostUp = iptables -t mangle -A PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
     echo "PostUp = iptables -t mangle -A PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
@@ -83,10 +83,10 @@ if [ "$HOST_LOCAL_IP_ADDRESS" ]; then
   echo "" >> $WIREGUARD_CONFIG_FILE
 fi
 if [ "$HOST_LOCAL_IP_ADDRESS" ]; then
-    echo "PreDown = iptables -t mangle -D PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = iptables -t mangle -D PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
-    echo "PreDown = iptables -t mangle -D OUTPUT -p udp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = iptables -t mangle -D PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = iptables -t mangle -D PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = iptables -t mangle -D OUTPUT -p tcp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
+  echo "PreDown = iptables -t mangle -D OUTPUT -p udp -s $HOST_LOCAL_IP_ADDRESS -j MARK --set-mark 51820" >> $WIREGUARD_CONFIG_FILE
   if [ "$AVOID_VPN_FOR_THESE_PORTS" ]; then
     echo "PreDown = iptables -t mangle -D PREROUTING -p udp -s $HOST_LOCAL_IP_ADDRESS -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
     echo "PreDown = iptables -t mangle -D PREROUTING -p tcp -s $HOST_LOCAL_IP_ADDRESS -m multiport --dports $AVOID_VPN_FOR_THESE_PORTS -j MARK --set-mark 80" >> $WIREGUARD_CONFIG_FILE
