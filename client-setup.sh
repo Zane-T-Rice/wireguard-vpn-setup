@@ -6,7 +6,7 @@
 # and fill out these variables once you have run the server-setup.sh script.
 #
 # Note on how I use this: I have several docker containers all within the
-# 172.19.0.0/12 space. I use this setup to send all docker traffic over
+# 172.0.0.0/8 space. I use this setup to send all docker traffic over
 # WireGuard to effectively give the containers a public IP address.
 #
 # The public IP of the server where the WireGuard server client script was run.
