@@ -27,7 +27,7 @@ ALLOWED_IPs=0.0.0.0/0
 #
 # Communication destined for another device in the HOST_LOCAL_IP_ADDRESS
 # space will not go over the VPN.
-HOST_LOCAL_IP_ADDRESS=172.19.0.0/12
+HOST_LOCAL_IP_ADDRESS=172.0.0.0/8
 # Communication from all ports on the HOST_LOCAL_IP_ADDRESS will
 # go through the VPN unless they are specified here or have a
 # destination within the HOST_LOCAL_IP_ADDRESS.
