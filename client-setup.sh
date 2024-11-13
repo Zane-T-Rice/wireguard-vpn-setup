@@ -6,7 +6,7 @@
 # and fill out these variables once you have run the server-setup.sh script.
 #
 # Note on how I use this: I have several docker containers all within the
-# 172.0.0.0/8 space. I use this setup to send all docker traffic over
+# 172.16.0.0/12 space. I use this setup to send all docker traffic over
 # WireGuard to effectively give the containers a public IP address.
 #
 # The public IP of the server where the WireGuard server client script was run.
@@ -27,7 +27,7 @@ ALLOWED_IPs=0.0.0.0/0
 #
 # Communication destined for another device in the HOST_LOCAL_IP_ADDRESS
 # space will not go over the VPN.
-HOST_LOCAL_IP_ADDRESS=172.0.0.0/8
+HOST_LOCAL_IP_ADDRESS=172.16.0.0/12
 # Communication from all ports on the HOST_LOCAL_IP_ADDRESS will
 # go through the VPN unless they are specified here or have a
 # destination within the HOST_LOCAL_IP_ADDRESS.
