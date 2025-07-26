@@ -8,6 +8,7 @@ WIREGUARD_CONFIG_FILE=/etc/wireguard/wg0.conf
 
 # Install Wireguard and Generate Keys
 sudo apt update
+sudo apt upgrade
 sudo apt install wireguard
 sudo apt install vim
 sudo apt install resolvconf
